@@ -93,8 +93,8 @@ function start(name,studentID){
           "classroomID": url,
           "studentName": name,
         }),
-        success: function() {
-            console.log("成功");
+        success: function(data) {
+            console.log("成功"+data);
         },
         error: function(XMLHttpRequest){
           console.log(XMLHttpRequest.responseText);
@@ -321,17 +321,18 @@ function start(name,studentID){
       '$.ajax({'+
         'type:"PUT",'+
         'url: "https://concern-backendserver.herokuapp.com/api/student/update",'+
+        'dataType: "text",'+
         'data: {'+
           '"classroomID":url,'+
           '"studentName": name_meet,'+
           '"concernDegree": concernValue,'+
           '"time": currentDateTime'+
         '},'+
-        'success: function() {'+
-            'console.log(concernValue);'+
+        'success: function(data) {'+
+            'console.log(data);'+
             'setTimeout(send,100);'+
         '},'+
-        'error: function(XMLHttpRequest, textStatus, errorThrown){'+
+        'error: function(XMLHttpRequest){'+
           'console.log(XMLHttpRequest.responseText);'+
           'setTimeout(send,100);'+
         '}'+
