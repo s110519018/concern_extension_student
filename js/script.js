@@ -4,23 +4,76 @@ var getSelectedTab = (tab) => {
   document.getElementById('start').addEventListener('click', () => {
     var name = document.getElementById("name");
     var studentID = document.getElementById("studentID");
-    // console.log("name"+name.value);
-    // console.log("studentID"+studentID.value);
     sendMessage({ action: 'START' , name: name.value, studentID: studentID.value});
+    // window.close();
+  });
+  document.getElementById('end').addEventListener('click', () => {
+    sendMessage({ action: 'END' });
+    window.close();
+    
+  });
+  document.getElementById('exit').addEventListener('click', () => {
+    sendMessage({ action: 'END' });
     window.close();
   });
-  // document.getElementById('reset').addEventListener('click', () => sendMessage({ action: 'RESET' }));
-  
-  // document.getElementById('hide_role').addEventListener('click', () => sendMessage({ action: 'Hide_RoleS' }));
-  // document.getElementById('reset_role').addEventListener('click', () => sendMessage({ action: 'Reset_RoleS' }));
-
-  // document.getElementById('hide_childbt1').addEventListener('click', () => sendMessage({ action: 'Hide_Childbt1' }));
-  // document.getElementById('reset_childbt1').addEventListener('click', () => sendMessage({ action: 'Reset_Childbt1' }));
-  
-  // document.getElementById('mission').addEventListener('click', () => sendMessage({ action: 'Mission' }));
-
-  // document.getElementById('test').addEventListener('click', () => sendMessage({ action: 'Test' }));
-  // document.getElementById('reset_test').addEventListener('click', () => sendMessage({ action: 'Reset_Test' }))
-
+  document.getElementById('reload').addEventListener('click', () => {
+    chrome.runtime.reload();
+  });
 }
 chrome.tabs.getSelected(null, getSelectedTab);
+
+
+
+// chrome.runtime.sendMessage({msg: "sendtoPOPUP"}, function(response) {
+//   document.getElementById('loading').textContent="loading...";
+//   if (response.isClassing==1){
+//     document.getElementById('loading').textContent="";
+//     document.getElementById('not_classing').style.display='none';
+//     document.getElementById('is_classing').style.display='block';
+//   }
+//   else if(response.isClassing==2){
+//     document.getElementById('loading').textContent="";
+//     document.getElementById('is_classing').style.display='none';
+//     document.getElementById('not_classing').style.display='block';
+//   }
+//   else{
+//     document.getElementById('loading').textContent="";
+//     document.getElementById('is_classing').style.display='none';
+//     document.getElementById('not_classing').style.display='block';
+//   }
+// });
+
+chrome.runtime.onMessage.addListener(  
+  function(request, sender, sendResponse) {   
+    if (request.msg === "sendtoPOPUP") {
+      document.getElementById('loading').textContent="";
+      switch(request.data.isClassing){
+        case 0:
+          document.getElementById('loading').textContent="loading...";
+          document.getElementById('is_classing').style.display='none';
+          document.getElementById('not_classing').style.display='none';
+          break;
+        case 1:
+          document.getElementById('not_classing').style.display='none';
+          document.getElementById('is_classing').style.display='block';
+          break;
+        case 2:
+          document.getElementById('is_classing').style.display='none';
+          document.getElementById('not_classing').style.display='block';
+          break;
+        case 3:
+          document.getElementById('is_classing').style.display='none';
+          document.getElementById('not_classing').style.display='none';
+          document.getElementById('not_start').style.display='block';
+          break;
+      }
+      // if (request.data.isClassing==1){
+      //   document.getElementById('not_classing').style.display='none';
+      //   document.getElementById('is_classing').style.display='block';
+      // }
+      // else if(request.data.isClassing==2){
+      //   document.getElementById('is_classing').style.display='none';
+      //   document.getElementById('not_classing').style.display='block';
+      // }
+    } 
+});

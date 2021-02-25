@@ -35,6 +35,9 @@ const onMessage = (message) => {
     case 'START':
       start(message.name,message.studentID);
       break;
+    case 'END':
+      end();
+      break;
     default:
       break;
   }
@@ -58,36 +61,14 @@ function start(name,studentID){
     alert("請填入Google Meet名字和學號");
   }
   else{
+    chrome.runtime.sendMessage({isClassing:0});
     console.log("開始上課");
-    //   console.log("name"+name);
-    //   console.log("studentID"+studentID);
-
-
-    //抓各個視頻的名字
-    // var student_everyone=document.querySelectorAll(".YBp7jf")
-    // student_everyone.forEach(function(student){
-    //     if(student.innerHTML=="你"){
-    //       console.log("名字"+name+"學號"+studentID);
-    //       //抓視頻
-    //       // console.log("student.parentElement"+student.parentElement.nextElementSibling.nextElementSibling.firstElementChild);
-    //       // video = document.querySelector(".p2hjYe").firstElementChild;
-    //       video = student.parentElement.nextElementSibling.nextElementSibling.firstElementChild;
-    //       video.parentElement.parentElement.style.boxSizing = "border-box";
-    //       //   console.log("video.getAttribute(attributeName) "+video.getAttribute("data-uid"));
-    //       newCanvas.width = parseInt(video.parentElement.style.width);
-    //       newCanvas.height = parseInt(video.parentElement.style.height);
-    //       newCanvas.style.display='none';
-    //       // waitSeconds()
-    //       // chrome.runtime.sendMessage({'video': 'HI'}, function(response) {console.log("回應"+response)});
-
-    //     }
-    // });
     const url = window.location.pathname.substr(1);
     console.log(url);
     $.ajax({
         type:"POST",
         contentType: 'application/json',
-        dataType: "json",
+        dataType: "text",
         url: "https://concern-backendserver.herokuapp.com/api/student/startClass",
         data: JSON.stringify({
           "classroomID": url,
@@ -104,10 +85,12 @@ function start(name,studentID){
     insert_script.innerHTML =
     'var name_meet;'+
     'var studentID_meet;'+
+    'var isClassing_meet;'+
     'window.addEventListener("message",function(me) {  '+
       'name_meet=me.data.name;'+
       'studentID_meet=me.data.studentID;'+
-      'console.log("學生姓名和學號: " + me.data.studentID+me.data.name);'+
+      'isClassing_meet=me.data.isClassing_post;'+
+      'console.log("學生姓名和學號: " + me.data.studentID+me.data.name+"狀態"+isClassing_meet);'+
     '});  '+
 
     
@@ -328,22 +311,45 @@ function start(name,studentID){
           '"concernDegree": concernValue,'+
           '"time": currentDateTime'+
         '},'+
-        'success: function(data) {'+
-            'console.log(data);'+
-            'setTimeout(send,100);'+
+        'success: function(status) {'+
+            'console.log(status);'+
+            'if(isClassing_meet){'+
+              'window.postMessage({status: status,name:name_meet,studentID:studentID_meet,isClassing_post:isClassing_meet});'+
+              'setTimeout(send,100);'+
+            '}'+
         '},'+
         'error: function(XMLHttpRequest){'+
-          'console.log(XMLHttpRequest.responseText);'+
-          'setTimeout(send,100);'+
+          'console.log("error"+XMLHttpRequest.responseText);'+
+          'if(isClassing_meet){'+
+              'setTimeout(send,100);'+
+          '}'+
         '}'+
       '});'+
     '}';
   
     body.appendChild(insert_script);
-    window.postMessage({name:name,studentID:studentID});
+    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', true);
+    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('data-tooltip', "請透過疫距數得結束課程");
+    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-label', "請透過疫距數得結束課程");
+    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').style.background='#D0D0D0';
+    window.postMessage({isClassing_post:true,name:name,studentID:studentID});
   }  
 }
+function end(){
+  document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', false);
+  document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').click();
+  window.postMessage({isClassing_post:false});
+  chrome.runtime.sendMessage({isClassing:2});
+}
 
+window.addEventListener("message",function(me) {
+  if(me.data.status=="此課堂尚未開始"){
+    chrome.runtime.sendMessage({isClassing:3});
+  }
+  else if(me.data.status=="資料上傳成功"){
+    chrome.runtime.sendMessage({isClassing:1});
+  }
+});
 
 
 
