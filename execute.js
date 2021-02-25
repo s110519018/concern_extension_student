@@ -87,10 +87,18 @@ function start(name,studentID){
     'var studentID_meet;'+
     'var isClassing_meet;'+
     'window.addEventListener("message",function(me) {  '+
-      'name_meet=me.data.name;'+
-      'studentID_meet=me.data.studentID;'+
-      'isClassing_meet=me.data.isClassing_post;'+
-      'console.log("學生姓名和學號: " + me.data.studentID+me.data.name+"狀態"+isClassing_meet);'+
+      'switch(me.data.msg){'+
+        'case "start_class":'+
+          'name_meet=me.data.data.name;'+
+          'studentID_meet=me.data.data.studentID;'+
+          'isClassing_meet=me.data.data.isClassing_post;'+
+          'console.log("上課學生姓名和學號: " +name_meet+studentID_meet+isClassing_meet);'+
+          'break;'+
+        'case "end_class":'+
+          'isClassing_meet=me.data.data.isClassing_post;'+
+          'console.log("下課: " +isClassing_meet);'+
+          'break;'+
+      '}'+
     '});  '+
 
     
@@ -298,33 +306,36 @@ function start(name,studentID){
     '}'+
 
     'function send(){'+
-      'const url = window.location.pathname.substr(1);'+
-      'var today=new Date();'+
-      'var currentDateTime =today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();'+
-      '$.ajax({'+
-        'type:"PUT",'+
-        'url: "https://concern-backendserver.herokuapp.com/api/student/update",'+
-        'dataType: "text",'+
-        'data: {'+
-          '"classroomID":url,'+
-          '"studentName": name_meet,'+
-          '"concernDegree": concernValue,'+
-          '"time": currentDateTime'+
-        '},'+
-        'success: function(status) {'+
-            'console.log(status);'+
-            'if(isClassing_meet){'+
-              'window.postMessage({status: status,name:name_meet,studentID:studentID_meet,isClassing_post:isClassing_meet});'+
+      'if(isClassing_meet){'+
+        'const url = window.location.pathname.substr(1);'+
+        'var today=new Date();'+
+        'var currentDateTime =today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();'+
+        '$.ajax({'+
+          'type:"PUT",'+
+          'url: "https://concern-backendserver.herokuapp.com/api/student/update",'+
+          'dataType: "text",'+
+          'data: {'+
+            '"classroomID":url,'+
+            '"studentName": name_meet,'+
+            '"concernDegree": concernValue,'+
+            '"time": currentDateTime'+
+          '},'+
+          'success: function(status) {'+
+              'console.log(status);'+
+              'if(isClassing_meet){'+
+                'window.postMessage({status: status});'+
+              '}'+
               'setTimeout(send,100);'+
-            '}'+
-        '},'+
-        'error: function(XMLHttpRequest){'+
-          'console.log("error"+XMLHttpRequest.responseText);'+
-          'if(isClassing_meet){'+
-              'setTimeout(send,100);'+
+          '},'+
+          'error: function(XMLHttpRequest){'+
+            'console.log("error"+XMLHttpRequest.responseText);'+
+                'setTimeout(send,100);'+
           '}'+
-        '}'+
-      '});'+
+        '});'+
+      '}'+
+      'else{'+
+        'window.postMessage({status: "下課了!"});'+
+      '}'+
     '}';
   
     body.appendChild(insert_script);
@@ -332,17 +343,18 @@ function start(name,studentID){
     document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('data-tooltip', "請透過疫距數得結束課程");
     document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-label', "請透過疫距數得結束課程");
     document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').style.background='#D0D0D0';
-    window.postMessage({isClassing_post:true,name:name,studentID:studentID});
+    window.postMessage({msg: "start_class", data:{isClassing_post:true,name:name,studentID:studentID}});
   }  
 }
 function end(){
   document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', false);
   document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').click();
-  window.postMessage({isClassing_post:false});
+  window.postMessage({msg: "end_class", data:{isClassing_post:false}});
   chrome.runtime.sendMessage({isClassing:2});
 }
 
 window.addEventListener("message",function(me) {
+  console.log("me.data.status"+me.data.status);
   if(me.data.status=="此課堂尚未開始"){
     chrome.runtime.sendMessage({isClassing:3});
   }
