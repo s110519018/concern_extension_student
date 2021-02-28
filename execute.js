@@ -28,7 +28,7 @@ var jquery = document.createElement('script');
 jquery.setAttribute('src','https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js');
 jquery.setAttribute('crossorigin','anonymous');
 document.head.appendChild(jquery);
-
+var end_studentname;
 var body=document.getElementsByTagName('body')[0];
 const onMessage = (message) => {
   switch (message.action) {
@@ -36,7 +36,7 @@ const onMessage = (message) => {
       start(message.name,message.studentID);
       break;
     case 'END':
-      end();
+      end(end_studentname);
       break;
     default:
       break;
@@ -61,9 +61,10 @@ function start(name,studentID){
     alert("請填入Google Meet名字和學號");
   }
   else{
+    end_studentname=name;
     chrome.runtime.sendMessage({isClassing:0});
     console.log("開始上課");
-    const url = window.location.pathname.substr(1);
+    var url = window.location.pathname.substr(1);
     console.log(url);
     $.ajax({
         type:"POST",
@@ -307,7 +308,7 @@ function start(name,studentID){
 
     'function send(){'+
       'if(isClassing_meet){'+
-        'const url = window.location.pathname.substr(1);'+
+        'var url = window.location.pathname.substr(1);'+
         'var today=new Date();'+
         'var currentDateTime =today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();'+
         '$.ajax({'+
@@ -347,10 +348,18 @@ function start(name,studentID){
   }  
 }
 function end(){
+  // console.log("end"+end_studentname);
   document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', false);
   document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').click();
   window.postMessage({msg: "end_class", data:{isClassing_post:false}});
   chrome.runtime.sendMessage({isClassing:2});
+  chrome.runtime.sendMessage({
+    msg: 'createWindow',
+    data:{
+      classroomID: window.location.pathname.substr(1),
+      studentName:end_studentname
+    }
+  });
 }
 
 window.addEventListener("message",function(me) {

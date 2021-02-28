@@ -4,11 +4,12 @@ var getSelectedTab = (tab) => {
   document.getElementById('start').addEventListener('click', () => {
     var name = document.getElementById("name");
     var studentID = document.getElementById("studentID");
+    studentname=name.value;
     sendMessage({ action: 'START' , name: name.value, studentID: studentID.value});
     // window.close();
   });
   document.getElementById('end').addEventListener('click', () => {
-    sendMessage({ action: 'END' });
+    sendMessage({ action: 'END'});
     window.close();
     
   });
