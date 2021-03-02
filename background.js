@@ -146,6 +146,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         });
         console.log(request.data.classroomID+request.data.studentName);
     }
+    // else if(request.msg === "reload"){
+    //     console.log("reload");
+    //     window.location.reload();
+    // }
     else{
         console.log(request.isClassing);
         isClassing=request.isClassing;

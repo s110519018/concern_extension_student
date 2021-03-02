@@ -14,10 +14,11 @@ var getSelectedTab = (tab) => {
     
   });
   document.getElementById('exit').addEventListener('click', () => {
-    sendMessage({ action: 'EXIT' });
+    sendMessage({ action: 'END' });
     window.close();
   });
   document.getElementById('reload').addEventListener('click', () => {
+  //   sendMessage({ action: 'RELOAD' });
     chrome.runtime.reload();
   });
 }

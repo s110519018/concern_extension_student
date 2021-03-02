@@ -1,28 +1,37 @@
+try {
+  const url = new URL(window.location.href);
+  console.log("classroomID: "+ url.searchParams.get('classroomID'));
+  console.log("studentName: " + url.searchParams.get('studentName'));
+  //之後圖片載入要用非同步!不然一定完蛋
+  $.ajax({
+      type:"POST",
+      contentType: 'application/json',
+      dataType: "json",
+      url: "https://concern-backendserver.herokuapp.com/api/teacher/getPersonConcernDiagram",
+      data: JSON.stringify({
+      "classroomID": url.searchParams.get('classroomID'),
+      "studentName": url.searchParams.get('studentName'),
+      "timeSpacing":100
+      }),
+      success: function (msg) {
+          console.log(msg);
+          drawChart(msg);
+      },
+      error: function(error){
+        console.log(error);
+        $('.container').css('display', 'none');
+        $('#error').text("error錯誤，請按f5重新載入");
+      }
+  });
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart);
+  
+} catch (error) {
+  console.log(error);
+  $('.container').css('display', 'none');
+  $('#error').text("error錯誤，請按f5重新載入");
+}
 
-const url = new URL(window.location.href);
-console.log("classroomID: "+ url.searchParams.get('classroomID'));
-console.log("studentName: " + url.searchParams.get('studentName'));
-//之後圖片載入要用非同步!不然一定完蛋
-$.ajax({
-    type:"POST",
-    contentType: 'application/json',
-    dataType: "json",
-    url: "https://concern-backendserver.herokuapp.com/api/teacher/getPersonConcernDiagram",
-    data: JSON.stringify({
-    "classroomID": url.searchParams.get('classroomID'),
-    "studentName": url.searchParams.get('studentName'),
-    "timeSpacing":100
-    }),
-    success: function (msg) {
-        console.log(msg);
-        drawChart(msg);
-    },
-    error: function(error){
-    console.log(error)
-    }
-});
-google.charts.load("current", {packages:["corechart"]});
-google.charts.setOnLoadCallback(drawChart);
 
 
 function drawChart(results) {
@@ -104,6 +113,12 @@ function drawChart(results) {
         a.href = imgUri;
         a.download = results.studentName+"的專注度統計";
         // a.click(); //要和按鈕融合
+    });
+    google.visualization.events.addListener(chart, 'error', function (googleError) {
+      google.visualization.errors.removeError(googleError.id);
+      //here you can write your custom message or nothing if you want remove
+      $('.container').css('display', 'none');
+      $('#error').text("error錯誤，請按f5重新載入");
     });
     chart.draw(view, options);
 }

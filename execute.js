@@ -38,9 +38,9 @@ const onMessage = (message) => {
     case 'END':
       end();
       break;
-    case 'EXIT':
-      exit();
-      break;
+    // case 'RELOAD':
+    //   chrome.runtime.sendMessage({msg: 'reload'});
+    //   break;  
     default:
       break;
   }
@@ -364,13 +364,7 @@ function end(){
     }
   });
 }
-function exit(){
-  // console.log("end"+end_studentname);
-  document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', false);
-  document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').click();
-  window.postMessage({msg: "end_class", data:{isClassing_post:false}});
-  chrome.runtime.sendMessage({isClassing:2});
-}
+
 
 window.addEventListener("message",function(me) {
   console.log("me.data.status"+me.data.status);
