@@ -14,7 +14,7 @@ var getSelectedTab = (tab) => {
     
   });
   document.getElementById('exit').addEventListener('click', () => {
-    sendMessage({ action: 'END' });
+    sendMessage({ action: 'EXIT' });
     window.close();
   });
   document.getElementById('reload').addEventListener('click', () => {

@@ -36,7 +36,10 @@ const onMessage = (message) => {
       start(message.name,message.studentID);
       break;
     case 'END':
-      end(end_studentname);
+      end();
+      break;
+    case 'EXIT':
+      exit();
       break;
     default:
       break;
@@ -360,6 +363,13 @@ function end(){
       studentName:end_studentname
     }
   });
+}
+function exit(){
+  // console.log("end"+end_studentname);
+  document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', false);
+  document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').click();
+  window.postMessage({msg: "end_class", data:{isClassing_post:false}});
+  chrome.runtime.sendMessage({isClassing:2});
 }
 
 window.addEventListener("message",function(me) {
