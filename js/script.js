@@ -54,14 +54,17 @@ chrome.runtime.onMessage.addListener(
           document.getElementById('loading').textContent="loading...";
           document.getElementById('is_classing').style.display='none';
           document.getElementById('not_classing').style.display='none';
+          document.getElementById('not_start').style.display='none';
           break;
         case 1:
           document.getElementById('not_classing').style.display='none';
           document.getElementById('is_classing').style.display='block';
+          document.getElementById('not_start').style.display='none';
           break;
         case 2:
           document.getElementById('is_classing').style.display='none';
           document.getElementById('not_classing').style.display='block';
+          document.getElementById('not_start').style.display='none';
           break;
         case 3:
           document.getElementById('is_classing').style.display='none';
