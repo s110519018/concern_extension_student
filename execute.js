@@ -28,6 +28,77 @@ var jquery = document.createElement('script');
 jquery.setAttribute('src','https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js');
 jquery.setAttribute('crossorigin','anonymous');
 document.head.appendChild(jquery);
+
+//alert的html
+var alert_html = document.createElement('div');
+alert_html.innerHTML='<div id="alert" class="alert">'+
+  '<img src="https://i.imgur.com/X0GLypw.png" alt="" class="alert_img">'+
+  '<p class="alert_p">不專心警示！</p>'+
+  '<button id="hide" class="alert_btn">了解</button>'+
+'</div>'+
+'<audio id="alertAudio" controls loop>'+
+  '<source src="https://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3" type="audio/ogg">'+
+  '<source src="https://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3" type="audio/mpeg">'+
+'</audio>';
+//alert的css
+var alert_css = document.createElement("style");
+alert_css.innerHTML ='.alert{ '+
+  'z-index:150; '+
+  'position: fixed; '+
+  'top: 25%;'+
+  'left: 25%;'+
+  'width: 600px;'+
+  'height: 350px;'+
+  'background-color: rgba(243, 43, 16, 0.65);  '+
+  'border-radius: 10px;'+
+  'transform: scale(0);  '+
+  'opacity:0;  '+
+  'transform-origin: center center;'+
+  'text-align: center;'+
+'}'+
+'.alert_img{'+
+    'margin-top: 10px;'+
+'}'+
+'.alert_p{'+
+    'font-family: Noto Sans TC;'+
+    'font-weight: normal;'+
+    'font-size: 55px;'+
+    'line-height: 29px;'+
+    'text-align: center;'+
+    'color: #FFFFFF;'+
+    'margin-top: 30px;'+
+'}'+
+'.alert_btn{'+
+    'background: #F9D505;'+
+    'border-radius: 10px;'+
+    'border:0;'+
+    'border-radius: 100px;'+
+    'font-weight: bold;'+
+    'padding: 6px 20px;'+
+    'outline: 0;'+
+    'cursor: pointer;'+
+    'font-size: 25px;'+
+'}'+
+'.alert_btn:hover{'+
+    'background-color: #000;'+
+    'color: #A0E557;'+
+'}'+
+'.show{  '+
+    '-webkit-transition: 0.2s;  '+
+    '-moz-transition: 0.2s; '+ 
+    '-ms-transition: 0.2s; '+ 
+    '-o-transition: 0.2s;  '+
+    'transition: 0.2s;  '+
+    'opacity:1;  '+
+    'transform: scale(1)  !important;'+
+'}'+
+'.hide{  '+
+    'opacity:0;  '+
+    'transform: scale(0)  !important;'+
+'}';
+
+
+
 var end_studentname;
 var body=document.getElementsByTagName('body')[0];
 const onMessage = (message) => {
@@ -77,6 +148,7 @@ function start(name,studentID){
         data: JSON.stringify({
           "classroomID": url,
           "studentName": name,
+          "studentID": studentID
         }),
         success: function(data) {
             console.log("成功"+data);
@@ -100,7 +172,7 @@ function start(name,studentID){
           'break;'+
         'case "end_class":'+
           'isClassing_meet=me.data.data.isClassing_post;'+
-          'console.log("下課: " +isClassing_meet);'+
+          'console.log("是否上課: " +isClassing_meet);'+
           'break;'+
       '}'+
     '});  '+
@@ -290,24 +362,60 @@ function start(name,studentID){
       '}'+
     '}'+
   
+    'var setTime = 10;'+
+    'var t = setTime;'+
+    'var showTime_start=false;'+
+    'var alertShow=false;'+
+    'var x = document.getElementById("alertAudio");'+
     'function addborder(){'+  
       'var color_str=concernValue;'+
       'console.log(color_str+video.getAttribute("data-uid"));'+
       'if(color_str !="No Face"){'+
         'if(color_str<0.5){'+
           'video.parentElement.parentElement.style.border="6px solid red";'+
+          'if(!showTime_start){'+
+            'showTime();'+
+          '}'+
         '}'+
         'else if(color_str>0.5&&color_str<0.8){'+
           'video.parentElement.parentElement.style.border="6px solid yellow";'+
+          't = setTime;'+
+          'showTime_start=false;'+   
+          'hide();'+   
         '}'+
         'else if(color_str>0.8){'+
           'video.parentElement.parentElement.style.border="6px solid green";'+
+          't = setTime;'+
+          'showTime_start=false;'+
+          'hide();'+   
         '}'+
       '}'+
       'else{'+
         'video.parentElement.parentElement.style.border="6px solid red";'+
+        'if(!showTime_start){'+
+            'showTime();'+
+        '}'+
       '}'+
     '}'+
+
+    'function showTime(){'+
+      'if(!alertShow){'+
+        'var today=new Date();'+
+        'if(concernValue =="No Face"||concernValue <0.5){'+
+          'showTime_start=true;'+
+          't -= 1;'+
+          'console.log("%c%s", "color: green; background: yellow; font-size: 24px;",t+"  "+today.getSeconds());'+
+          'if(t==0)'+
+          '{'+
+              'console.log("%c%s", "color: green; background: yellow; font-size: 24px;","時間到"+t+"  "+today.getSeconds());'+
+              'show();'+
+              't = setTime;'+
+          '}'+
+          'setTimeout("showTime()",1000);'+
+        '}'+ 
+      '}'+
+    '}'+
+
 
     'function send(){'+
       'if(isClassing_meet){'+
@@ -321,6 +429,7 @@ function start(name,studentID){
           'data: {'+
             '"classroomID":url,'+
             '"studentName": name_meet,'+
+            '"studentID": studentID_meet,'+
             '"concernDegree": concernValue,'+
             '"time": currentDateTime'+
           '},'+
@@ -340,8 +449,32 @@ function start(name,studentID){
       'else{'+
         'window.postMessage({status: "下課了!"});'+
       '}'+
+    '}'+
+    
+
+
+    
+    'document.getElementById("hide").addEventListener("click", hide);'+
+    'function show(){'+
+      'console.log("%c%s", "color: green; background: yellow; font-size: 24px;","Alert!");'+
+      'alertShow=true;'+
+      'x.currentTime=0;'+
+      'x.play(); '+
+      'document.getElementById("alert").classList.add("show");'+
+      'document.getElementById("alert").classList.remove("hide");'+
+    '}'+
+    'function hide(){'+
+      'x.pause(); '+
+      'alertShow=false;'+
+      'showTime_start=false;'+
+      'document.getElementById("alert").classList.add("hide");'+
+      'document.getElementById("alert").classList.remove("show");'+
     '}';
-  
+    body.appendChild(alert_css);
+    body.appendChild(alert_html);
+
+    
+    
     body.appendChild(insert_script);
     document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', true);
     document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('data-tooltip', "請透過疫距數得結束課程");
@@ -352,6 +485,8 @@ function start(name,studentID){
 }
 function end(){
   // console.log("end"+end_studentname);
+  alert_html.remove();
+  alert_css.remove();
   document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', false);
   document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').click();
   window.postMessage({msg: "end_class", data:{isClassing_post:false}});
