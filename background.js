@@ -137,14 +137,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // }
     if (request.msg === "createWindow") {
         chrome.windows.create({
-        url: "chart.html?classroomID=" + request.data.classroomID+"&studentName="+request.data.studentName,
+        url: "chart.html?classroomID=" + request.data.classroomID+"&studentName="+request.data.studentName+"&dataID="+request.data.dataID,
         type: "popup",
         width: 1000,
         height: 400,
         }, function (newWindow) {
             console.log(newWindow);
         });
-        console.log(request.data.classroomID+request.data.studentName);
+        console.log(request.data.classroomID+request.data.studentName+request.data.dataID);
     }
     // else if(request.msg === "reload"){
     //     console.log("reload");

@@ -98,7 +98,7 @@ alert_css.innerHTML ='.alert{ '+
 '}';
 
 
-
+var dataID;
 var end_studentname;
 var body=document.getElementsByTagName('body')[0];
 const onMessage = (message) => {
@@ -137,38 +137,24 @@ function start(name,studentID){
   else{
     end_studentname=name;
     chrome.runtime.sendMessage({isClassing:0});
-    console.log("開始上課");
+    console.log("開始上課按鈕按下");
     var url = window.location.pathname.substr(1);
-    console.log(url);
-    $.ajax({
-        type:"POST",
-        contentType: 'application/json',
-        dataType: "text",
-        url: "https://concern-backendserver.herokuapp.com/api/student/startClass",
-        data: JSON.stringify({
-          "classroomID": url,
-          "studentName": name,
-          "studentID": studentID
-        }),
-        success: function(data) {
-            console.log("成功"+data);
-        },
-        error: function(XMLHttpRequest){
-          console.log(XMLHttpRequest.responseText);
-        }
-    });
+    // console.log(url);
+    // 原本$.ajax丟這
     body.appendChild(newCanvas);
     insert_script.innerHTML =
     'var name_meet;'+
     'var studentID_meet;'+
     'var isClassing_meet;'+
+    'var dataID_meet;'+
     'window.addEventListener("message",function(me) {  '+
       'switch(me.data.msg){'+
         'case "start_class":'+
           'name_meet=me.data.data.name;'+
           'studentID_meet=me.data.data.studentID;'+
           'isClassing_meet=me.data.data.isClassing_post;'+
-          'console.log("上課學生姓名和學號: " +name_meet+studentID_meet+isClassing_meet);'+
+          'dataID_meet=me.data.data.dataID;'+
+          'console.log("上課學生姓名和學號: " +name_meet+studentID_meet+isClassing_meet+dataID_meet);'+
           'break;'+
         'case "end_class":'+
           'isClassing_meet=me.data.data.isClassing_post;'+
@@ -428,8 +414,7 @@ function start(name,studentID){
           'dataType: "text",'+
           'data: {'+
             '"classroomID":url,'+
-            '"studentName": name_meet,'+
-            '"studentID": studentID_meet,'+
+            '"DataID": dataID_meet,'+
             '"concernDegree": concernValue,'+
             '"time": currentDateTime'+
           '},'+
@@ -470,17 +455,33 @@ function start(name,studentID){
       'document.getElementById("alert").classList.add("hide");'+
       'document.getElementById("alert").classList.remove("show");'+
     '}';
-    body.appendChild(alert_css);
-    body.appendChild(alert_html);
-
-    
-    
-    body.appendChild(insert_script);
-    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', true);
-    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('data-tooltip', "請透過疫距數得結束課程");
-    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-label', "請透過疫距數得結束課程");
-    document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').style.background='#D0D0D0';
-    window.postMessage({msg: "start_class", data:{isClassing_post:true,name:name,studentID:studentID}});
+    $.ajax({
+      type:"POST",
+      contentType: 'application/json',//傳送至伺服端資料型別
+      dataType: "text",//伺服器傳回來的型別
+      url: "https://concern-backendserver.herokuapp.com/api/student/startClass",
+      data: JSON.stringify({
+        "classroomID": url,
+        "studentName": name,
+        "studentID": studentID
+      }),
+      success: function(data) {
+          console.log("成功"+data);
+          dataID=data;
+          body.appendChild(alert_css);
+          body.appendChild(alert_html);
+          body.appendChild(insert_script);
+          document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-disabled', true);
+          document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('data-tooltip', "請透過疫距數得結束課程");
+          document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').setAttribute('aria-label', "請透過疫距數得結束課程");
+          document.querySelector('.U26fgb.JRY2Pb.mUbCce.kpROve.GaONte.Qwoy0d.ZPasfd.vzpHY').style.background='#D0D0D0';
+          window.postMessage({msg: "start_class", data:{isClassing_post:true,name:name,studentID:studentID,dataID:dataID}});
+      },
+      error: function(XMLHttpRequest){
+        console.log(XMLHttpRequest.responseText);
+      }
+  });
+  //ajax success裡面的原本放這  
   }  
 }
 function end(){
@@ -495,14 +496,15 @@ function end(){
     msg: 'createWindow',
     data:{
       classroomID: window.location.pathname.substr(1),
-      studentName:end_studentname
+      studentName:end_studentname,
+      dataID:dataID
     }
   });
 }
 
 
 window.addEventListener("message",function(me) {
-  console.log("me.data.status"+me.data.status);
+  console.log("學生端監聽me.data.status"+me.data.status);
   if(me.data.status=="此課堂尚未開始"){
     chrome.runtime.sendMessage({isClassing:3});
   }

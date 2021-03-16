@@ -1,7 +1,10 @@
 try {
-  const url = new URL(window.location.href);
-  console.log("classroomID: "+ url.searchParams.get('classroomID'));
+  var url = new URL(window.location.href);
+  var classroomID=url.searchParams.get('classroomID');
+  var dataID=url.searchParams.get('dataID');
+  console.log("classroomID: "+ classroomID);
   console.log("studentName: " + url.searchParams.get('studentName'));
+  console.log("studentName: " + dataID);
   //之後圖片載入要用非同步!不然一定完蛋
   $.ajax({
       type:"POST",
@@ -9,8 +12,8 @@ try {
       dataType: "json",
       url: "https://concern-backendserver.herokuapp.com/api/teacher/getPersonConcernDiagram",
       data: JSON.stringify({
-      "classroomID": url.searchParams.get('classroomID'),
-      "studentName": url.searchParams.get('studentName'),
+      "classroomID": classroomID,
+      "DataID": dataID,
       "timeSpacing":100
       }),
       success: function (msg) {
