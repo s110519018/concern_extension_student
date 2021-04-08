@@ -1,13 +1,75 @@
+html,body{
+    margin: 0 0;
+    background-color: #FAF9F9;
+}
+.parallax{
+    text-align: center;
+}
+.parallax img{
+  width: 100%;
+}
+.container{
+    background-color: #FAF9F9;
+    padding-top: 50px;
+    position: relative;
+    padding-left: 6%;
+    padding-right: 6%;
+}  
+.container::before{
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 0;
+    border-radius: 62px 62px 0% 0%;
+    width: 100%;
+    height: 50px;
+    background-color: #FAF9F9;
+}
 #download{
     border:0;
     outline: 0;
     cursor: pointer;  
 }
+li{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    color: #82A098;
+    list-style: none;
+    margin-bottom: 27px;
+}
+li::before{
+    content: "::"; 
+    color: #82A098;
+    display: inline-block; 
+    font-size: 30px;
+    width: 1em;
+    margin-left: -1em;
+}
 button{
     display: none;
+    border: none;
+    width: 320px;
+    height: 60px;
+    background-color: #82A098;
+    border-radius: 40px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    color: #FAF9F9;
+    margin: 36px auto;
 }
 a{
     text-decoration:none;
+    color: #FAF9F9;
+}
+.chart{
+    position: relative;
+    min-height: 400px;
 }
 #loading{
     position: absolute;
@@ -20,4 +82,17 @@ a{
     width: 100%;
     height:100%; 
     background:url(https://i1.wp.com/cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif) center center no-repeat;
+}
+footer{
+    width: 100%;
+    height: 120px;
+    text-align: center;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    color: #FAF9F9;
+    line-height:120px;
+    background: #82A098 url(http://www.graphicartsunit.com/images/noise.png)
 }

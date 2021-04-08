@@ -11,12 +11,19 @@
     <link rel="stylesheet" href="chart.css">
 </head>
 <body>
+    <div class="parallax">
+        <img src="https://i.imgur.com/yl8MbId.png" alt="">
+    </div>
     <div class="container">
-        <button><a id="download">下載</a></button>
-        <div id="loading"></div>
-        <div id="SteppedAreachart_values_personal"></div>
+        <li>個人時序表</li>
+        <div class="chart">
+            <div id="loading"></div>
+            <div id="SteppedAreachart_values_personal"></div>
+            <button><a id="download">下載</a></button>
+        </div>
     </div>
     <h1 id="error"style="color: red;"></h1>
+    <footer>©2021 exCoDItension</footer>
     <script src="chart.js"></script>
 </body>
 </html>

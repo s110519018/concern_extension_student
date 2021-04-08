@@ -63,7 +63,7 @@ function drawChart(results) {
     title: results.studentName+"的專注度統計",
     width: '1200px',
     height: '400px',
-    backgroundColor: "white",
+    backgroundColor: "#FAF9F9",
     legend: { position: "none" },
     titleTextStyle: {
       color: "black",
