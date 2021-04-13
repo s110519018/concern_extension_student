@@ -358,26 +358,26 @@ function start(name,studentID){
       'console.log(color_str+video.getAttribute("data-uid"));'+
       'if(color_str !="No Face"){'+
         'if(color_str<0.5){'+
-          'video.parentElement.parentElement.style.border="6px solid red";'+
+          'video.parentElement.parentElement.style.border="8px solid red";'+
           'if(!showTime_start){'+
             'showTime();'+
           '}'+
         '}'+
         'else if(color_str>0.5&&color_str<0.8){'+
-          'video.parentElement.parentElement.style.border="6px solid yellow";'+
+          'video.parentElement.parentElement.style.border="4px solid yellow";'+
           't = setTime;'+
           'showTime_start=false;'+   
           'hide();'+   
         '}'+
         'else if(color_str>0.8){'+
-          'video.parentElement.parentElement.style.border="6px solid green";'+
+          'video.parentElement.parentElement.style.border="4px solid green";'+
           't = setTime;'+
           'showTime_start=false;'+
           'hide();'+   
         '}'+
       '}'+
       'else{'+
-        'video.parentElement.parentElement.style.border="6px solid red";'+
+        'video.parentElement.parentElement.style.border="8px solid red";'+
         'if(!showTime_start){'+
             'showTime();'+
         '}'+

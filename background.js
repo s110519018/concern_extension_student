@@ -140,7 +140,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         url: "chart.html?classroomID=" + request.data.classroomID+"&studentName="+request.data.studentName+"&dataID="+request.data.dataID,
         type: "popup",
         width: 1000,
-        height: 400,
+        height: 800,
         }, function (newWindow) {
             console.log(newWindow);
         });
