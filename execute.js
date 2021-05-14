@@ -147,6 +147,8 @@ function start(name,studentID){
     'var studentID_meet;'+
     'var isClassing_meet;'+
     'var dataID_meet;'+
+    'var setTimeout_send;'+
+    'var setTimeout_showTime;'+
     'window.addEventListener("message",function(me) {  '+
       'switch(me.data.msg){'+
         'case "start_class":'+
@@ -185,7 +187,7 @@ function start(name,studentID){
           'newCanvas.style.display="none";'+
 
           'waitSeconds();'+
-          'setTimeout(send,100);'+
+          'setTimeout_send=setTimeout(send,100);'+
 
         '}'+
     '});'+
@@ -366,13 +368,15 @@ function start(name,studentID){
         'else if(color_str>0.5&&color_str<0.8){'+
           'video.parentElement.parentElement.style.border="4px solid yellow";'+
           't = setTime;'+
-          'showTime_start=false;'+   
+          'showTime_start=false;'+
+          'clearTimeout(setTimeout_showTime);'+   
           'hide();'+   
         '}'+
         'else if(color_str>0.8){'+
           'video.parentElement.parentElement.style.border="4px solid green";'+
           't = setTime;'+
           'showTime_start=false;'+
+          'clearTimeout(setTimeout_showTime);'+
           'hide();'+   
         '}'+
       '}'+
@@ -397,7 +401,7 @@ function start(name,studentID){
               'show();'+
               't = setTime;'+
           '}'+
-          'setTimeout("showTime()",1000);'+
+          'setTimeout_showTime=setTimeout("showTime()",1000);'+
         '}'+ 
       '}'+
     '}'+
@@ -423,11 +427,13 @@ function start(name,studentID){
               'if(isClassing_meet){'+
                 'window.postMessage({status: status});'+
               '}'+
-              'setTimeout(send,100);'+
+              'clearTimeout(setTimeout_send);'+
+              'setTimeout_send=setTimeout(send,100);'+
           '},'+
           'error: function(XMLHttpRequest){'+
             'console.log("error"+XMLHttpRequest.responseText);'+
-                'setTimeout(send,100);'+
+            'clearTimeout(setTimeout_send);'+
+            'setTimeout_send=setTimeout(send,100);'+
           '}'+
         '});'+
       '}'+
